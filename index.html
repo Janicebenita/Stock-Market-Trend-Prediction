@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Prediction</title>
+</head>
+<body>
+    <h2>Stock Market Trend Prediction</h2>
+    <form id="form">
+        <input type="text" id="ticker" placeholder="Enter ticker (AAPL)" />
+        <input type="text" id="news_api_key" placeholder="NewsAPI Key (optional)" />
+        <button type="submit">Predict</button>
+    </form>
+
+    <pre id="result"></pre>
+    <img id="plot" />
+
+    <script>
+        document.getElementById('form').onsubmit = async (e) => {
+            e.preventDefault();
+            const ticker = document.getElementById('ticker').value;
+            const news_api_key = document.getElementById('news_api_key').value;
+
+            const res = await fetch('/predict', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ticker, news_api_key})
+            });
+
+            const data = await res.json();
+            document.getElementById('result').innerText =
+                JSON.stringify(data, null, 2);
+
+            if (data.plot_image) {
+                document.getElementById('plot').src = data.plot_image;
+            }
+        };
+    </script>
+</body>
+</html>
